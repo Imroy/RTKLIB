@@ -212,8 +212,8 @@ static int decode_rxmrawx(raw_t *raw)
 {
     gtime_t time;
     double tow0,tow,cp1,pr1;
-    int i,j,sys,prn,sat,fcn,n=0,nsat,week,tstat,lockt,halfc;
-    unsigned char *p=raw->buff+6,*q;
+    int i,j,sys,prn,sat,n=0,nsat,week,tstat,lockt,halfc;
+    unsigned char *p=raw->buff+6;
     
     trace(4,"decode_rxmrawx: len=%d\n",raw->len);
     

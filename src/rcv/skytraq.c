@@ -129,7 +129,7 @@ static int decode_stqraw(raw_t *raw)
 {
     unsigned char *p=raw->buff+4,ind;
     double pr1,cp1;
-    int i,j,iod,prn,sys,sat,n=0,nsat,slip;
+    int i,j,iod,prn,sys,sat,n=0,nsat;
     
     trace(4,"decode_stqraw: len=%d\n",raw->len);
     
