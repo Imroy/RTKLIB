@@ -33,13 +33,14 @@ RNX2RTKP_OBJS = $(patsubst %, src/%.o, ephemeris geoid ionex lambda options\
 RTKRCV_OBJS = $(patsubst %, src/%.o, ephemeris geoid ionex lambda options\
 		ppp ppp_ar qzslex pntpos rcvraw rinex rtkpos rtksvr stream solution)
 STR2STR_OBJS = $(patsubst %, src/%.o, geoid rcvraw stream streamsvr solution)
+GENSTEC_OBJS = $(patsubst %, src/%.o, rtkcmn ephemeris rinex)
 RNX2RTCM_OBJS = $(patsubst %, src/%.o, rinex)
 SIMOBS_OBJS = $(patsubst %, src/%.o, rinex rtkcmn)
 
 PROGS = app/convbin/convbin app/pos2kml/pos2kml app/rnx2rtkp/rnx2rtkp\
 	app/rtkrcv/rtkrcv app/str2str/str2str util/rnx2rtcm/rnx2rtcm\
 	util/gencrc/gencrc util/gencrc/genxor util/gencrc/genmsk\
-	util/simobs/simobs
+	util/geniono/genstec util/simobs/simobs
 
 all : $(PROGS)
 
@@ -65,6 +66,9 @@ util/gencrc/genxor : util/gencrc/genxor.o
 	$(CC) -o $@ $^ -lm
 
 util/gencrc/genmsk : util/gencrc/genmsk.o
+	$(CC) -o $@ $^ -lm
+
+util/geniono/genstec : util/geniono/genstec.o
 	$(CC) -o $@ $^ -lm
 
 util/simobs/simobs : util/simobs/simobs.o $(SRC_OBJS) $(SIMOBS_OBJS)
@@ -105,6 +109,9 @@ test_str2str:
 
 test_gencrc:
 	util/gencrc/test.sh
+
+test_geniono:
+	util/geniono/test.sh
 
 test_rnx2rtcm:
 	util/rnx2rtcm/test.sh
