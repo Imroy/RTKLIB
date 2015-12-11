@@ -19,4 +19,4 @@ install:
 	cp pos2kml $(BINDIR)
 
 clean:
-	rm -f pos2kml pos2kml.exe *.o
+	rm -f pos2kml *.o

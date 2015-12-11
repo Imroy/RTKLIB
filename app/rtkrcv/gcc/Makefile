@@ -45,5 +45,5 @@ test3:
 	./rtkrcv -o ../rtk_pb.conf
 
 clean:
-	rm -f rtkrcv rtkrcv.exe rtkrcv.nav *.o *.out *.trace
+	rm -f rtkrcv rtkrcv.nav *.o *.out *.trace
 
