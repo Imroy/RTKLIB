@@ -187,7 +187,7 @@ int main(int argc, char **argv)
     double pos[3],stapos[3]={0},off[3]={0};
     char *paths[MAXSTR],s[MAXSTR][MAXSTRPATH]={{0}},*cmdfile="";
     char *local="",*proxy="",*msg="1004,1019",*opt="",buff[256],*p;
-    char strmsg[MAXSTRMSG]="",*antinfo="",*rcvinfo="",ant[3]={""},rcv[3]={""};
+    char strmsg[MAXSTRMSG]="",*antinfo="",*rcvinfo="",*ant[3]={""},*rcv[3]={""};
     int i,n=0,dispint=5000,trlevel=0,opts[]={10000,10000,2000,32768,10,0,30};
     int types[MAXSTR]={STR_FILE,STR_FILE},stat[MAXSTR]={0},byte[MAXSTR]={0};
     int bps[MAXSTR]={0},fmts[MAXSTR]={0},sta=0;
