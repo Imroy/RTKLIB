@@ -1,9 +1,10 @@
 BINDIR  = /usr/local/bin
 
-OPTS    = -DTRACE -DENAGLO -DENAQZS -DENAGAL -DNFREQ=3 -DNEXOBS=3
+OPTS    = -DTRACE -DENAGLO -DENAQZS -DENAGAL -DNFREQ=3 -DNEXOBS=3 -DMAXOBS=128
 
 # for no lapack
 CFLAGS  += -Wall -ansi -pedantic -Wno-unused-but-set-variable -g
+F77FLAGS += -ffixed-line-length-132
 LDLIBS  = -lm -lrt
 
 #CFLAGS  += -Wall -ansi -pedantic -Wno-unused-but-set-variable -DLAPACK
@@ -33,10 +34,12 @@ RTKRCV_OBJS = $(patsubst %, src/%.o, ephemeris geoid ionex lambda options\
 		ppp ppp_ar qzslex pntpos rcvraw rinex rtkpos rtksvr stream solution)
 STR2STR_OBJS = $(patsubst %, src/%.o, geoid rcvraw stream streamsvr solution)
 RNX2RTCM_OBJS = $(patsubst %, src/%.o, rinex)
+SIMOBS_OBJS = $(patsubst %, src/%.o, rinex rtkcmn)
 
 PROGS = app/convbin/convbin app/pos2kml/pos2kml app/rnx2rtkp/rnx2rtkp\
 	app/rtkrcv/rtkrcv app/str2str/str2str util/rnx2rtcm/rnx2rtcm\
-	util/gencrc/gencrc util/gencrc/genxor util/gencrc/genmsk
+	util/gencrc/gencrc util/gencrc/genxor util/gencrc/genmsk\
+	util/simobs/simobs
 
 all : $(PROGS)
 
@@ -64,6 +67,9 @@ util/gencrc/genxor : util/gencrc/genxor.o
 util/gencrc/genmsk : util/gencrc/genmsk.o
 	$(CC) -o $@ $^ -lm
 
+util/simobs/simobs : util/simobs/simobs.o $(SRC_OBJS) $(SIMOBS_OBJS)
+	$(CC) -o $@ $^ -lm
+
 %.o   : %.c src/rtklib.h
 	$(CC) $(CFLAGS) -Isrc $(OPTS) -o $@ -c $<
 
@@ -75,14 +81,14 @@ clean :
 	rm -fv app/rnx2rtkp/*.pos app/rnx2rtkp/*.pos.stat app/rnx2rtkp/*.trace
 	rm -fv app/rtkrcv/*.out app/rtkrcv/*.trace
 	rm -fv app/str2str/*.trace app/str2str/*.out
-	rm -fv util/gencrc/{crc16.c,crc24.c,xor.c,msk.c}
+	rm -fv util/gencrc/crc16.c util/gencrc/crc24.c util/gencrc/xor.c util/gencrc/msk.c
 	rm -fv util/rnx2rtcm/*.trace
 
 # Should be run as root e.g with sudo
 install :
 	install -t $(BINDIR) $(PROGS)
 
-test: test_convbin test_rnx2rtkp test_str2str test_gencrc test_rnx2rtcm
+test: test_convbin test_rnx2rtkp test_str2str test_gencrc test_rnx2rtcm test_simobs
 
 test_convbin:
 	app/convbin/test.sh
@@ -102,6 +108,9 @@ test_gencrc:
 
 test_rnx2rtcm:
 	util/rnx2rtcm/test.sh
+
+test_simobs:
+	util/simobs/test.sh
 
 depend:
 	touch .depend
