@@ -22,39 +22,42 @@ LDLIBS  = -lm -lrt
 #LDLIBS  = -L$(MKLDIR)/lib/intel64 -lm -lrt -lmkl_core -lmkl_intel_lp64 -lmkl_gnu_thread -liomp5 -lpthread
 
 # Common objects for all programs
-SRC_OBJS = preceph.o rtcm.o rtcm2.o rtcm3.o rtcm3e.o rtkcmn.o sbas.o
-RCV_OBJS = binex.o crescent.o gw10.o javad.o novatel.o nvs.o\
-	skytraq.o ss2.o rt17.o ublox.o
+SRC_OBJS = $(patsubst %, $(SRC)/%.o, preceph rtcm rtcm2 rtcm3 rtcm3e rtkcmn sbas)
+RCV_OBJS = $(patsubst %, $(SRC)/rcv/%.o, binex crescent gw10 javad novatel nvs\
+	skytraq ss2 rt17 ublox)
 
 # Objects for each program
-CONVBIN_OBJS = convrnx.o ephemeris.o ionex.o qzslex.o pntpos.o rcvraw.o rinex.o
-POS2KML_OBJS = convkml.o geoid.o solution.o
-RNX2RTKP_OBJS = ephemeris.o geoid.o ionex.o lambda.o options.o postpos.o ppp.o ppp_ar.o qzslex.o pntpos.o rinex.o rtkpos.o solution.o
-RTKRCV_OBJS = ephemeris.o geoid.o ionex.o lambda.o options.o ppp.o ppp_ar.o qzslex.o pntpos.o rcvraw.o rinex.o rtkpos.o rtksvr.o stream.o solution.o
-STR2STR_OBJS = geoid.o rcvraw.o stream.o streamsvr.o solution.o
+CONVBIN_OBJS = $(patsubst %, $(SRC)/%.o, convrnx ephemeris ionex qzslex pntpos\
+		rcvraw rinex)
+POS2KML_OBJS = $(patsubst %, $(SRC)/%.o, convkml geoid solution)
+RNX2RTKP_OBJS = $(patsubst %, $(SRC)/%.o, ephemeris geoid ionex lambda options\
+		postpos ppp ppp_ar qzslex pntpos rinex rtkpos solution)
+RTKRCV_OBJS = $(patsubst %, $(SRC)/%.o, ephemeris geoid ionex lambda options\
+		ppp ppp_ar qzslex pntpos rcvraw rinex rtkpos rtksvr stream solution)
+STR2STR_OBJS = $(patsubst %, $(SRC)/%.o, geoid rcvraw stream streamsvr solution)
 
 PROGS = convbin/convbin pos2kml/pos2kml rnx2rtkp/rnx2rtkp rtkrcv/rtkrcv str2str/str2str
 
 all : $(PROGS)
 
-convbin/convbin   : convbin/convbin.o $(patsubst %.o,$(SRC)/%.o, $(SRC_OBJS) $(CONVBIN_OBJS)) $(patsubst %.o,$(SRC)/rcv/%.o, $(RCV_OBJS))
+convbin/convbin   : convbin/convbin.o $(SRC_OBJS) $(CONVBIN_OBJS) $(RCV_OBJS)
 
-pos2kml/pos2kml   : pos2kml/pos2kml.o $(patsubst %.o,$(SRC)/%.o, $(SRC_OBJS) $(POS2KML_OBJS))
+pos2kml/pos2kml   : pos2kml/pos2kml.o $(SRC_OBJS) $(POS2KML_OBJS)
 
-rnx2rtkp/rnx2rtkp : rnx2rtkp/rnx2rtkp.o $(patsubst %.o,$(SRC)/%.o, $(SRC_OBJS) $(RNX2RTKP_OBJS))
+rnx2rtkp/rnx2rtkp : rnx2rtkp/rnx2rtkp.o $(SRC_OBJS) $(RNX2RTKP_OBJS)
 
-rtkrcv/rtkrcv     : rtkrcv/rtkrcv.o $(patsubst %.o,$(SRC)/%.o, $(SRC_OBJS) $(RTKRCV_OBJS)) $(patsubst %.o,$(SRC)/rcv/%.o, $(RCV_OBJS))
+rtkrcv/rtkrcv     : rtkrcv/rtkrcv.o $(SRC_OBJS) $(RTKRCV_OBJS) $(RCV_OBJS)
 	$(CC) -o $@ $^ $(LDLIBS) -lpthread
 
-str2str/str2str   : str2str/str2str.o $(patsubst %.o,$(SRC)/%.o, $(SRC_OBJS) $(STR2STR_OBJS)) $(patsubst %.o,$(SRC)/rcv/%.o, $(RCV_OBJS))
+str2str/str2str   : str2str/str2str.o $(SRC_OBJS) $(STR2STR_OBJS) $(RCV_OBJS)
 	$(CC) -o $@ $^ $(LDLIBS) -lpthread
 
 %.o   : %.c $(SRC)/rtklib.h
 	$(CC) $(CFLAGS) -I$(SRC) $(OPTS) -o $@ -c $<
 
 clean :
-	rm -fv $(patsubst %.o,$(SRC)/%.o, $(SRC_OBJS) $(CONVBIN_OBJS) $(POS2KML_OBJS) $(RNX2RTKP_OBJS) $(RTKRCV_OBJS) $(STR2STR_OBJS))
-	rm -fv $(patsubst %.o,$(SRC)/rcv/%.o, $(RCV_OBJS))
+	rm -fv $(SRC_OBJS) $(CONVBIN_OBJS) $(POS2KML_OBJS) $(RNX2RTKP_OBJS) $(RTKRCV_OBJS) $(STR2STR_OBJS)
+	rm -fv $(RCV_OBJS)
 	rm -fv $(patsubst %,%.o, $(PROGS)) $(PROGS)
 	rm -fv convbin/*.obs convbin/*.nav convbin/*.gnav convbin/*.hnav convbin/*.qnav convbin/*.sbs convbin/*.stackdump
 	rm -fv rnx2rtkp/*.pos rnx2rtkp/*.pos.stat rnx2rtkp/*.trace
