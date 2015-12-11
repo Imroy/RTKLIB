@@ -30,7 +30,7 @@ str2str.o  : ../str2str.c $(SRC)/rtklib.h
 	$(CC) -c $(CFLAGS) $<
 
 install:
-	cp str2str $(BINDIR)
+	install str2str $(BINDIR)
 
 #DEVICE=ttyACM0
 DEVICE=ttyS1:115200:8:n:1:off

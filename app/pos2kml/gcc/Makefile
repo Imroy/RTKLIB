@@ -16,7 +16,7 @@ pos2kml.o  : ../pos2kml.c $(SRC)/rtklib.h
 	$(CC) -c $(CFLAGS) $<
 
 install:
-	cp pos2kml $(BINDIR)
+	install pos2kml $(BINDIR)
 
 clean:
 	rm -f pos2kml *.o

@@ -30,7 +30,7 @@ rtkrcv.o   : ../rtkrcv.c $(SRC)/rtklib.h
 	$(CC) -c $(CFLAGS) $<
 
 install:
-	cp rtkrcv $(BINDIR)
+	install rtkrcv $(BINDIR)
 
 test1:
 	./rtkrcv -t 4 -m 52001 -t 4
