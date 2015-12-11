@@ -9,3 +9,4 @@ app/pos2kml/pos2kml
 app/rnx2rtkp/rnx2rtkp
 app/rtkrcv/rtkrcv
 app/str2str/str2str
+util/rnx2rtcm/rnx2rtcm
