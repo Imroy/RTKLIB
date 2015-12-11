@@ -13,3 +13,4 @@ util/gencrc/gencrc
 util/gencrc/genxor
 util/gencrc/genmsk
 util/rnx2rtcm/rnx2rtcm
+util/simobs/simobs
