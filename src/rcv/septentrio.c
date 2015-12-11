@@ -361,7 +361,9 @@ static int decode_measepoch(raw_t *raw){
         /* NOT SURE IF THIS IS CORRECT, MAYBE ITS SHOULD APPLY TO L2 AS WELL */
         /* phase polarity flip option (-INVCP) */
         if (strstr(raw->opt,"-INVCP")) {
-            // raw->obs.data[n].L[0]=-raw->obs.data[n].L[0];
+/*
+            raw->obs.data[n].L[0]=-raw->obs.data[n].L[0];
+*/
             adr = - adr;
         }
 
