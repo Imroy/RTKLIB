@@ -1,3 +1,4 @@
+*~
 *.o
 *.obs
 *.ini
@@ -6,3 +7,8 @@ Release
 Release_Build
 Debug_Build
 __history
+app/convbin/gcc/convbin
+app/pos2kml/gcc/pos2kml
+app/rnx2rtkp/gcc/rnx2rtkp
+app/rtkrcv/gcc/rtkrcv
+app/str2str/gcc/str2str
