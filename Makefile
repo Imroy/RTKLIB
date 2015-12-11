@@ -35,7 +35,8 @@ STR2STR_OBJS = $(patsubst %, src/%.o, geoid rcvraw stream streamsvr solution)
 RNX2RTCM_OBJS = $(patsubst %, src/%.o, rinex)
 
 PROGS = app/convbin/convbin app/pos2kml/pos2kml app/rnx2rtkp/rnx2rtkp\
-	app/rtkrcv/rtkrcv app/str2str/str2str util/rnx2rtcm/rnx2rtcm
+	app/rtkrcv/rtkrcv app/str2str/str2str util/rnx2rtcm/rnx2rtcm\
+	util/gencrc/gencrc util/gencrc/genxor util/gencrc/genmsk
 
 all : $(PROGS)
 
@@ -54,6 +55,15 @@ app/str2str/str2str   : app/str2str/str2str.o $(SRC_OBJS) $(STR2STR_OBJS) $(RCV_
 util/rnx2rtcm/rnx2rtcm : util/rnx2rtcm/rnx2rtcm.o $(SRC_OBJS) $(RNX2RTCM_OBJS)
 	$(CC) -o $@ $^ -lm
 
+util/gencrc/gencrc : util/gencrc/gencrc.o
+	$(CC) -o $@ $^ -lm
+
+util/gencrc/genxor : util/gencrc/genxor.o
+	$(CC) -o $@ $^ -lm
+
+util/gencrc/genmsk : util/gencrc/genmsk.o
+	$(CC) -o $@ $^ -lm
+
 %.o   : %.c src/rtklib.h
 	$(CC) $(CFLAGS) -Isrc $(OPTS) -o $@ -c $<
 
@@ -65,13 +75,14 @@ clean :
 	rm -fv app/rnx2rtkp/*.pos app/rnx2rtkp/*.pos.stat app/rnx2rtkp/*.trace
 	rm -fv app/rtkrcv/*.out app/rtkrcv/*.trace
 	rm -fv app/str2str/*.trace app/str2str/*.out
+	rm -fv util/gencrc/{crc16.c,crc24.c,xor.c,msk.c}
 	rm -fv util/rnx2rtcm/*.trace
 
 # Should be run as root e.g with sudo
 install :
 	install -t $(BINDIR) $(PROGS)
 
-test: test_convbin test_rnx2rtkp test_str2str test_rnx2rtcm
+test: test_convbin test_rnx2rtkp test_str2str test_gencrc test_rnx2rtcm
 
 test_convbin:
 	app/convbin/test.sh
@@ -85,6 +96,9 @@ test_rtkrcv:
 
 test_str2str:
 	app/str2str/test.sh
+
+test_gencrc:
+	util/gencrc/test.sh
 
 test_rnx2rtcm:
 	util/rnx2rtcm/test.sh
