@@ -55,5 +55,5 @@ test6:
 	./str2str -in serial://ttyS54:115200#nov -out tcpsvr://:2103#rtcm3 -c ../../../data/oem4_raw_10hz.cmd
 
 clean:
-	rm -f str2str str2str.exe *.o *.out *.trace
+	rm -f str2str *.o *.out *.trace
 
