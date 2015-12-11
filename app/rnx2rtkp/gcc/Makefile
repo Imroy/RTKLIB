@@ -102,5 +102,5 @@ prof :
 	gprof rnx2rtkp > prof.txt
 
 install :
-	cp rnx2rtkp $(BINDIR)
+	install rnx2rtkp $(BINDIR)
 

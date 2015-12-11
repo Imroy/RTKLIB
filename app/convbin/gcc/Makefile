@@ -34,7 +34,7 @@ convbin.o  : ../convbin.c $(SRC)/rtklib.h
 DATDIR = ../../../test/data/rcvraw
 
 install:
-	cp convbin $(BINDIR)
+	install convbin $(BINDIR)
 
 clean:
 	rm -f convbin *.o *.obs *.nav *.gnav *.hnav *.qnav *.sbs *.stackdump
