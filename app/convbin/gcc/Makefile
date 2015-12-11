@@ -13,89 +13,23 @@ CFLAGS += -ansi -pedantic -Wall -Wno-unused-but-set-variable $(INCLUDE) $(OPTION
 
 LDLIBS = -lm -lrt
 
+SRC_OBJS = rtkcmn.o rinex.o sbas.o preceph.o rcvraw.o convrnx.o\
+	rtcm.o rtcm2.o rtcm3.o rtcm3e.o pntpos.o ephemeris.o ionex.o qzslex.o
+RCV_OBJS = novatel.o ss2.o ublox.o crescent.o skytraq.o gw10.o javad.o nvs.o\
+	binex.o rt17.o
+
 all  : convbin
 
-convbin    : convbin.o rtkcmn.o rinex.o sbas.o preceph.o rcvraw.o convrnx.o
-convbin    : rtcm.o rtcm2.o rtcm3.o rtcm3e.o pntpos.o ephemeris.o ionex.o
-convbin    : novatel.o ss2.o ublox.o crescent.o skytraq.o gw10.o javad.o nvs.o
-convbin    : binex.o rt17.o qzslex.o
+convbin : convbin.o $(SRC_OBJS) $(RCV_OBJS)
 
-convbin.o  : ../convbin.c
+convbin.o  : ../convbin.c $(SRC)/rtklib.h
 	$(CC) -c $(CFLAGS) ../convbin.c
-rtkcmn.o   : $(SRC)/rtkcmn.c
-	$(CC) -c $(CFLAGS) $(SRC)/rtkcmn.c
-rinex.o    : $(SRC)/rinex.c
-	$(CC) -c $(CFLAGS) $(SRC)/rinex.c
-sbas.o     : $(SRC)/sbas.c
-	$(CC) -c $(CFLAGS) $(SRC)/sbas.c
-preceph.o  : $(SRC)/preceph.c
-	$(CC) -c $(CFLAGS) $(SRC)/preceph.c
-rcvraw.o   : $(SRC)/rcvraw.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcvraw.c
-convrnx.o  : $(SRC)/convrnx.c
-	$(CC) -c $(CFLAGS) $(SRC)/convrnx.c
-rtcm.o     : $(SRC)/rtcm.c
-	$(CC) -c $(CFLAGS) $(SRC)/rtcm.c
-rtcm2.o    : $(SRC)/rtcm2.c
-	$(CC) -c $(CFLAGS) $(SRC)/rtcm2.c
-rtcm3.o    : $(SRC)/rtcm3.c
-	$(CC) -c $(CFLAGS) $(SRC)/rtcm3.c
-rtcm3e.o   : $(SRC)/rtcm3e.c
-	$(CC) -c $(CFLAGS) $(SRC)/rtcm3e.c
-pntpos.o   : $(SRC)/pntpos.c
-	$(CC) -c $(CFLAGS) $(SRC)/pntpos.c
-ionex.o    : $(SRC)/ionex.c
-	$(CC) -c $(CFLAGS) $(SRC)/ionex.c
-ephemeris.o: $(SRC)/ephemeris.c
-	$(CC) -c $(CFLAGS) $(SRC)/ephemeris.c
-novatel.o  : $(SRC)/rcv/novatel.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcv/novatel.c
-ss2.o      : $(SRC)/rcv/ss2.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcv/ss2.c
-ublox.o    : $(SRC)/rcv/ublox.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcv/ublox.c
-crescent.o : $(SRC)/rcv/crescent.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcv/crescent.c
-skytraq.o  : $(SRC)/rcv/skytraq.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcv/skytraq.c
-gw10.o     : $(SRC)/rcv/gw10.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcv/gw10.c
-javad.o    : $(SRC)/rcv/javad.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcv/javad.c
-nvs.o      : $(SRC)/rcv/nvs.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcv/nvs.c
-binex.o    : $(SRC)/rcv/binex.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcv/binex.c
-rt17.o     : $(SRC)/rcv/rt17.c
-	$(CC) -c $(CFLAGS) $(SRC)/rcv/rt17.c
-qzslex.o    : $(SRC)/qzslex.c
-	$(CC) -c $(CFLAGS) $(SRC)/qzslex.c
 
-convbin.o  : $(SRC)/rtklib.h
-rtkcmn.o   : $(SRC)/rtklib.h
-rinex.o    : $(SRC)/rtklib.h
-sbas.o     : $(SRC)/rtklib.h
-preceph.o  : $(SRC)/rtklib.h
-rcvraw.o   : $(SRC)/rtklib.h
-convrnx.o  : $(SRC)/rtklib.h
-rtcm.o     : $(SRC)/rtklib.h
-rtcm2.o    : $(SRC)/rtklib.h
-rtcm3.o    : $(SRC)/rtklib.h
-rtcm3e.o   : $(SRC)/rtklib.h
-pntpos.o   : $(SRC)/rtklib.h
-ephemeris.o: $(SRC)/rtklib.h
-ionex.o    : $(SRC)/rtklib.h
-novatel.o  : $(SRC)/rtklib.h
-ss2.o      : $(SRC)/rtklib.h
-ublox.o    : $(SRC)/rtklib.h
-crescent.o : $(SRC)/rtklib.h
-skytraq.o  : $(SRC)/rtklib.h
-gw10.o     : $(SRC)/rtklib.h
-javad.o    : $(SRC)/rtklib.h
-nvs.o      : $(SRC)/rtklib.h
-binex.o    : $(SRC)/rtklib.h
-rt17.o     : $(SRC)/rtklib.h
-qzslex.o   : $(SRC)/rtklib.h
+%.o   : $(SRC)/%.c $(SRC)/rtklib.h
+	$(CC) -c $(CFLAGS) $<
+
+%.o   : $(SRC)/rcv/%.c $(SRC)/rtklib.h
+	$(CC) -c $(CFLAGS) $<
 
 DATDIR = ../../../test/data/rcvraw
 
