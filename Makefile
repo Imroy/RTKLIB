@@ -39,8 +39,8 @@ SIMOBS_OBJS = $(patsubst %, src/%.o, rinex rtkcmn)
 
 PROGS = app/convbin/convbin app/pos2kml/pos2kml app/rnx2rtkp/rnx2rtkp\
 	app/rtkrcv/rtkrcv app/str2str/str2str util/rnx2rtcm/rnx2rtcm\
-	util/gencrc/gencrc util/gencrc/genxor util/gencrc/genmsk\
-	util/geniono/genstec util/simobs/simobs
+	util/gencrc/gencrc util/gencrc/genxor util/gencrc/genmsk
+#	util/geniono/genstec util/simobs/simobs
 
 all : $(PROGS)
 
