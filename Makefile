@@ -22,7 +22,7 @@ LDLIBS  = -lm -lrt
 # Common objects for all programs
 SRC_OBJS = $(patsubst %, src/%.o, preceph rtcm rtcm2 rtcm3 rtcm3e rtkcmn sbas)
 RCV_OBJS = $(patsubst %, src/rcv/%.o, binex crescent gw10 javad novatel nvs\
-	skytraq ss2 rt17 ublox)
+	skytraq ss2 rt17 ublox sirf)
 
 # Objects for each program
 CONVBIN_OBJS = $(patsubst %, src/%.o, convrnx ephemeris ionex qzslex pntpos\
