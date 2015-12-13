@@ -377,6 +377,7 @@ extern "C" {
 #define STR_NTRIPCLI 7                  /* stream type: NTRIP client */
 #define STR_FTP      8                  /* stream type: ftp */
 #define STR_HTTP     9                  /* stream type: http */
+#define STR_UNIXSVR  10                 /* stream type: unix domain socket server */
 
 #define STRFMT_RTCM2 0                  /* stream format: RTCM 2 */
 #define STRFMT_RTCM3 1                  /* stream format: RTCM 3 */
@@ -391,17 +392,18 @@ extern "C" {
 #define STRFMT_NVS   10                 /* stream format: NVS NVC08C */
 #define STRFMT_BINEX 11                 /* stream format: BINEX */
 #define STRFMT_RT17  12                 /* stream format: Trimble RT17 */
-#define STRFMT_LEXR  13                 /* stream format: Furuno LPY-10000 */
-#define STRFMT_SEPT  14                 /* stream format: Septentrio */
-#define STRFMT_RINEX 15                 /* stream format: RINEX */
-#define STRFMT_SP3   16                 /* stream format: SP3 */
-#define STRFMT_RNXCLK 17                /* stream format: RINEX CLK */
-#define STRFMT_SBAS  18                 /* stream format: SBAS messages */
-#define STRFMT_NMEA  19                 /* stream format: NMEA 0183 */
+#define STRFMT_SIRF  13                 /* stream format: SiRF */
+#define STRFMT_LEXR  14                 /* stream format: Furuno LPY-10000 */
+#define STRFMT_SEPT  15                 /* stream format: Septentrio */
+#define STRFMT_RINEX 16                 /* stream format: RINEX */
+#define STRFMT_SP3   17                 /* stream format: SP3 */
+#define STRFMT_RNXCLK 18                /* stream format: RINEX CLK */
+#define STRFMT_SBAS  19                 /* stream format: SBAS messages */
+#define STRFMT_NMEA  20                 /* stream format: NMEA 0183 */
 #ifndef EXTLEX
-#define MAXRCVFMT    12                 /* max number of receiver format */
+#define MAXRCVFMT    13                 /* max number of receiver format */
 #else
-#define MAXRCVFMT    13
+#define MAXRCVFMT    14
 #endif
 
 #define STR_MODE_R  0x1                 /* stream mode: read */
