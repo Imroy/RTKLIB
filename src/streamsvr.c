@@ -3,8 +3,6 @@
 *
 *          Copyright (C) 2010-2012 by T.TAKASU, All rights reserved.
 *
-* options : -DWIN32    use WIN32 API
-*
 * version : $Revision:$ $Date:$
 * history : 2010/07/18 1.0  moved from stream.c
 *           2011/01/18 1.1  change api strsvrstart()
@@ -353,11 +351,7 @@ static void strconv(stream_t *str, strconv_t *conv, unsigned char *buff, int n)
     write_sta_cycle(str,conv);
 }
 /* stearm server thread ------------------------------------------------------*/
-#ifdef WIN32
-static DWORD WINAPI strsvrthread(void *arg)
-#else
 static void *strsvrthread(void *arg)
-#endif
 {
     strsvr_t *svr=(strsvr_t *)arg;
     unsigned int tick,ticknmea;
@@ -505,11 +499,7 @@ extern int strsvrstart(strsvr_t *svr, int *opts, int *strs, char **paths,
     if (cmd) strsendcmd(svr->stream,cmd);
     
     /* create stream server thread */
-#ifdef WIN32
-    if (!(svr->thread=CreateThread(NULL,0,strsvrthread,svr,0,NULL))) {
-#else
     if (pthread_create(&svr->thread,NULL,strsvrthread,svr)) {
-#endif
         for (i=0;i<svr->nstr;i++) strclose(svr->stream+i);
         return 0;
     }
@@ -529,12 +519,7 @@ extern void strsvrstop(strsvr_t *svr, const char *cmd)
     
     svr->state=0;
     
-#ifdef WIN32
-    WaitForSingleObject(svr->thread,10000);
-    CloseHandle(svr->thread);
-#else
     pthread_join(svr->thread,NULL);
-#endif
 }
 /* get stream server status ----------------------------------------------------
 * get status of stream server

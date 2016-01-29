@@ -41,27 +41,7 @@ typedef struct {                    /* download paths type */
 /* execute command with test timeout -----------------------------------------*/
 extern int execcmd_to(const char *cmd)
 {
-#ifdef WIN32
-    PROCESS_INFORMATION info;
-    STARTUPINFO si={0};
-    DWORD stat;
-    char cmds[4096];
-    
-    si.cb=sizeof(si);
-    sprintf(cmds,"cmd /c %s",cmd);
-    if (!CreateProcess(NULL,(LPTSTR)cmds,NULL,NULL,FALSE,CREATE_NO_WINDOW,NULL,
-                       NULL,&si,&info)) return -1;
-    
-    while (WaitForSingleObject(info.hProcess,10)==WAIT_TIMEOUT) {
-        showmsg("");
-    }
-    if (!GetExitCodeProcess(info.hProcess,&stat)) stat=-1;
-    CloseHandle(info.hProcess);
-    CloseHandle(info.hThread);
-    return (int)stat;
-#else
     return system(cmd);
-#endif
 }
 /* generate path by replacing keywords ---------------------------------------*/
 static void genpath(const char *file, const char *name, gtime_t time, int seqno,
@@ -128,14 +108,9 @@ static void remot2local(const char *remot, const char *dir, char *local)
 /* test file existance -------------------------------------------------------*/
 static int exist_file(const char *local)
 {
-#ifdef WIN32
-    DWORD stat=GetFileAttributes(local);
-    return stat!=0xFFFFFFFF;
-#else
     struct stat buff;
     if (stat(local,&buff)) return 0;
     return buff.st_mode&S_IRUSR;
-#endif
 }
 /* test file existance -------------------------------------------------------*/
 static int test_file(const char *local)
@@ -274,27 +249,6 @@ static int mkdir_r(const char *dir)
 {
     char pdir[1024],*p;
     
-#ifdef WIN32
-    HANDLE h;
-    WIN32_FIND_DATA data;
-    
-    if (!*dir||!strcmp(dir+1,":\\")) return 1;
-    
-    strcpy(pdir,dir);
-    if ((p=strrchr(pdir,FILEPATHSEP))) {
-        *p='\0';
-        h=FindFirstFile(pdir,&data);
-        if (h==INVALID_HANDLE_VALUE) {
-            if (!mkdir_r(pdir)) return 0;
-        }
-        else FindClose(h);
-    }
-    if (CreateDirectory(dir,NULL)||
-        GetLastError()==ERROR_ALREADY_EXISTS) return 1;
-    
-    trace(2,"directory generation error: dir=%s\n",dir);
-    return 0;
-#else
     FILE *fp;
     
     if (!*dir) return 1;
@@ -321,9 +275,7 @@ static int get_list(const path_t *path, const char *usr, const char *pwd,
     char cmd[4096],env[1024]="",remot[1024],*opt="",*opt2="",*p;
     int stat;
     
-#ifndef WIN32
     opt2=" -o /dev/null";
-#endif
     remove(FTP_LISTING);
     
     strcpy(remot,path->remot);
@@ -384,9 +336,7 @@ static int exec_down(const path_t *path, char *remot_p, const char *usr,
     char opt[1024]="",*opt2="",*p;
     int ret,proto;
     
-#ifndef WIN32
     opt2=" 2> /dev/null";
-#endif
     strcpy(dir,path->local);
     if ((p=strrchr(dir,FILEPATHSEP))) *p='\0';
     

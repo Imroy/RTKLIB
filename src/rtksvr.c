@@ -3,8 +3,6 @@
 *
 *          Copyright (C) 2007-2013 by T.TAKASU, All rights reserved.
 *
-* options : -DWIN32    use WIN32 API
-*
 * version : $Revision:$ $Date:$
 * history : 2009/01/07  1.0  new
 *           2009/06/02  1.1  support glonass
@@ -387,11 +385,7 @@ static void decodefile(rtksvr_t *svr, int index)
     }
 }
 /* rtk server thread ---------------------------------------------------------*/
-#ifdef WIN32
-static DWORD WINAPI rtksvrthread(void *arg)
-#else
 static void *rtksvrthread(void *arg)
-#endif
 {
     rtksvr_t *svr=(rtksvr_t *)arg;
     obs_t obs;
@@ -733,11 +727,7 @@ extern int rtksvrstart(rtksvr_t *svr, int cycle, int buffsize, int *strs,
         writesolhead(svr->stream+i,svr->solopt+i-3);
     }
     /* create rtk server thread */
-#ifdef WIN32
-    if (!(svr->thread=CreateThread(NULL,0,rtksvrthread,svr,0,NULL))) {
-#else
     if (pthread_create(&svr->thread,NULL,rtksvrthread,svr)) {
-#endif
         for (i=0;i<MAXSTRRTK;i++) strclose(svr->stream+i);
         return 0;
     }
@@ -769,12 +759,7 @@ extern void rtksvrstop(rtksvr_t *svr, char **cmds)
     svr->state=0;
     
     /* free rtk server thread */
-#ifdef WIN32
-    WaitForSingleObject(svr->thread,10000);
-    CloseHandle(svr->thread);
-#else
     pthread_join(svr->thread,NULL);
-#endif
 }
 /* open output/log stream ------------------------------------------------------
 * open output/log stream

@@ -3,9 +3,6 @@
 *
 *          Copyright (C) 2009-2014 by T.TAKASU, All rights reserved.
 *
-* notes   :
-*     current version does not support win32 without pthread library
-*
 * version : $Revision:$ $Date:$
 * history : 2009/12/13 1.0  new
 *           2010/07/18 1.1  add option -m
@@ -22,17 +19,12 @@
 *           2014/08/26 1.10 support input format "rt17"
 *                           change file paths of solution status and debug trace
 *-----------------------------------------------------------------------------*/
-#ifndef WIN32
 #define _POSIX_C_SOURCE 2
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
-#ifdef WIN32
-#include <winsock2.h>
-#else
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -47,7 +39,6 @@
 #include <netdb.h>
 #include <errno.h>
 #include <pthread.h>
-#endif
 #include "rtklib.h"
 
 static const char rcsid[]="$Id:$";

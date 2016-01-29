@@ -35,12 +35,7 @@
 #include <math.h>
 #include <time.h>
 #include <ctype.h>
-#ifdef WIN32
-#include <winsock2.h>
-#include <windows.h>
-#else
 #include <pthread.h>
-#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -450,21 +445,12 @@ extern "C" {
 #define P2_50       8.881784197001252E-16 /* 2^-50 */
 #define P2_55       2.775557561562891E-17 /* 2^-55 */
 
-#ifdef WIN32
-#define thread_t    HANDLE
-#define lock_t      CRITICAL_SECTION
-#define initlock(f) InitializeCriticalSection(f)
-#define lock(f)     EnterCriticalSection(f)
-#define unlock(f)   LeaveCriticalSection(f)
-#define FILEPATHSEP '\\'
-#else
 #define thread_t    pthread_t
 #define lock_t      pthread_mutex_t
 #define initlock(f) pthread_mutex_init(f,NULL)
 #define lock(f)     pthread_mutex_lock(f)
 #define unlock(f)   pthread_mutex_unlock(f)
 #define FILEPATHSEP '/'
-#endif
 
 /* type definitions ----------------------------------------------------------*/
 
