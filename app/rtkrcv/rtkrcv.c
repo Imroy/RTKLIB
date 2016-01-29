@@ -3,9 +3,6 @@
 *
 *          Copyright (C) 2009-2015 by T.TAKASU, All rights reserved.
 *
-* notes   :
-*     current version does not support win32 without pthread library
-*
 * version : $Revision:$ $Date:$
 * history : 2009/12/13 1.0  new
 *           2010/07/18 1.1  add option -m

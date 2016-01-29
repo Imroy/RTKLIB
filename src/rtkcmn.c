@@ -6,7 +6,6 @@
 * options : -DLAPACK   use LAPACK/BLAS
 *           -DMKL      use Intel MKL
 *           -DTRACE    enable debug trace
-*           -DWIN32    use WIN32 API
 *           -DNOCALLOC no use calloc for zero matrix
 *           -DIERS_MODEL use GMF instead of NMF
 *           -DDLL      built for shared library
@@ -115,13 +114,11 @@
 #define _POSIX_C_SOURCE 199309
 #include <stdarg.h>
 #include <ctype.h>
-#ifndef WIN32
 #include <dirent.h>
 #include <time.h>
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#endif
 #include "rtklib.h"
 
 static const char rcsid[]="$Id: rtkcmn.c,v 1.1 2008/07/17 21:48:06 ttaka Exp ttaka $";
@@ -1376,13 +1373,6 @@ extern gtime_t timeget(void)
 {
     gtime_t time;
     double ep[6]={0};
-#ifdef WIN32
-    SYSTEMTIME ts;
-    
-    GetSystemTime(&ts); /* utc */
-    ep[0]=ts.wYear; ep[1]=ts.wMonth;  ep[2]=ts.wDay;
-    ep[3]=ts.wHour; ep[4]=ts.wMinute; ep[5]=ts.wSecond+ts.wMilliseconds*1E-3;
-#else
     struct timeval tv;
     struct tm *tt;
     
@@ -1629,9 +1619,6 @@ extern int adjgpsweek(int week)
 *-----------------------------------------------------------------------------*/
 extern unsigned int tickget(void)
 {
-#ifdef WIN32
-    return (unsigned int)timeGetTime();
-#else
     struct timespec tp={0};
     struct timeval  tv={0};
     
@@ -1648,7 +1635,6 @@ extern unsigned int tickget(void)
     gettimeofday(&tv,NULL);
     return tv.tv_sec*1000u+tv.tv_usec/1000u;
 #endif
-#endif /* WIN32 */
 }
 /* sleep ms --------------------------------------------------------------------
 * sleep ms
@@ -1657,15 +1643,11 @@ extern unsigned int tickget(void)
 *-----------------------------------------------------------------------------*/
 extern void sleepms(int ms)
 {
-#ifdef WIN32
-    if (ms<5) Sleep(1); else Sleep(ms);
-#else
     struct timespec ts;
     if (ms<=0) return;
     ts.tv_sec=(time_t)(ms/1000);
     ts.tv_nsec=(long)(ms%1000*1000000);
     nanosleep(&ts,NULL);
-#endif
 }
 /* convert degree to deg-min-sec -----------------------------------------------
 * convert degree to degree-minute-second
@@ -2972,28 +2954,9 @@ extern void traceb  (int level, const unsigned char *p, int n) {}
 *-----------------------------------------------------------------------------*/
 extern int execcmd(const char *cmd)
 {
-#ifdef WIN32
-    PROCESS_INFORMATION info;
-    STARTUPINFO si={0};
-    DWORD stat;
-    char cmds[1024];
-    
-    trace(3,"execcmd: cmd=%s\n",cmd);
-    
-    si.cb=sizeof(si);
-    sprintf(cmds,"cmd /c %s",cmd);
-    if (!CreateProcess(NULL,(LPTSTR)cmds,NULL,NULL,FALSE,CREATE_NO_WINDOW,NULL,
-                       NULL,&si,&info)) return -1;
-    WaitForSingleObject(info.hProcess,INFINITE);
-    if (!GetExitCodeProcess(info.hProcess,&stat)) stat=-1;
-    CloseHandle(info.hProcess);
-    CloseHandle(info.hThread);
-    return (int)stat;
-#else
     trace(3,"execcmd: cmd=%s\n",cmd);
     
     return system(cmd);
-#endif
 }
 /* expand file path ------------------------------------------------------------
 * expand file path with wild-card (*) in file
@@ -3007,27 +2970,6 @@ extern int expath(const char *path, char *paths[], int nmax)
 {
     int i,j,n=0;
     char tmp[1024];
-#ifdef WIN32
-    WIN32_FIND_DATA file;
-    HANDLE h;
-    char dir[1024]="",*p;
-    
-    trace(3,"expath  : path=%s nmax=%d\n",path,nmax);
-    
-    if ((p=strrchr(path,'\\'))) {
-        strncpy(dir,path,p-path+1); dir[p-path+1]='\0';
-    }
-    if ((h=FindFirstFile((LPCTSTR)path,&file))==INVALID_HANDLE_VALUE) {
-        strcpy(paths[0],path);
-        return 1;
-    }
-    sprintf(paths[n++],"%s%s",dir,file.cFileName);
-    while (FindNextFile(h,&file)&&n<nmax) {
-        if (file.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) continue;
-        sprintf(paths[n++],"%s%s",dir,file.cFileName);
-    }
-    FindClose(h);
-#else
     struct dirent *d;
     DIR *dp;
     const char *file=path;
@@ -3052,7 +2994,6 @@ extern int expath(const char *path, char *paths[], int nmax)
         if (p&&n<nmax) sprintf(paths[n++],"%s%s",dir,d->d_name);
     }
     closedir(dp);
-#endif
     /* sort paths in alphabetical order */
     for (i=0;i<n-1;i++) {
         for (j=i+1;j<n;j++) {
@@ -3083,11 +3024,7 @@ extern void createdir(const char *path)
     if (!(p=strrchr(buff,FILEPATHSEP))) return;
     *p='\0';
     
-#ifdef WIN32
-    CreateDirectory(buff,NULL);
-#else
     mkdir(buff,0777);
-#endif
 }
 /* replace string ------------------------------------------------------------*/
 static int repstr(char *str, const char *pat, const char *rep)
@@ -3752,18 +3689,10 @@ extern int uncompress(const char *file, char *uncfile)
         strcpy(uncfile,tmpfile); uncfile[p-tmpfile]='\0';
         strcpy(buff,tmpfile);
         fname=buff;
-#ifdef WIN32
-        if ((p=strrchr(buff,'\\'))) {
-            *p='\0'; dir=fname; fname=p+1;
-        }
-        sprintf(cmd,"set PATH=%%CD%%;%%PATH%% & cd /D \"%s\" & tar -xf \"%s\"",
-                dir,fname);
-#else
         if ((p=strrchr(buff,'/'))) {
             *p='\0'; dir=fname; fname=p+1;
         }
         sprintf(cmd,"tar -C \"%s\" -xf \"%s\"",dir,tmpfile);
-#endif
         if (execcmd(cmd)) {
             if (stat) remove(tmpfile);
             return -1;

@@ -6,16 +6,11 @@
 * version : $Revision:$ $Date:$
 * history : 2015/01/11 1.0  separated from rtkrcv.c
 *-----------------------------------------------------------------------------*/
-#ifndef WIN32
 #define _POSIX_C_SOURCE 2
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
-#ifdef WIN32
-#include <winsock2.h>
-#else
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>

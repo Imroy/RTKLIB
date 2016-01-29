@@ -3,8 +3,6 @@
 *
 *          Copyright (C) 2007-2016 by T.TAKASU, All rights reserved.
 *
-* options : -DWIN32 use windows file path separator
-*
 * version : $Revision: 1.1 $ $Date: 2008/07/17 22:13:04 $
 * history : 2008/06/22 1.0 new
 *           2009/06/17 1.1 support glonass
